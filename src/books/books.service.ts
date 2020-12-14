@@ -1,24 +1,40 @@
+import { InjectRepository } from '@nestjs/typeorm'
 import { BookEntity } from './entities'
 import { UserEntity } from '../user/entities'
 import { GenreEntity } from '../genre/entities'
 import { CreateBookDto } from './dto'
+import { Repository } from 'typeorm'
 
 export class BooksService {
+  constructor(
+    @InjectRepository(BookEntity)
+    private readonly booksRepo: Repository<BookEntity>,
+  ) {}
+
   async insert(bookDetails: CreateBookDto): Promise<BookEntity> {
     const { name, userId, genreIds } = bookDetails
-    const book = new BookEntity()
-    book.name = name
-    book.user = await UserEntity.findOne(userId)
-    book.genres = []
-    for (let i = 0; i < genreIds.length; i++) {
-      const genre = await GenreEntity.findOne(genreIds[i])
-      book.genres.push(genre)
-    }
-    await book.save()
-    return book
+    const user = await UserEntity.findOne(userId)
+    const genres = await Promise.all(
+      genreIds.map((id) => GenreEntity.findOne(id)),
+    )
+    return this.booksRepo.save({
+      name,
+      user,
+      genres,
+    })
   }
 
   async getAllBooks(): Promise<BookEntity[]> {
     return BookEntity.find()
+  }
+
+  async deleteBook(bookId: number): Promise<number> {
+    await BookEntity.delete(bookId)
+    return bookId
+  }
+
+  async updateBook(bookId: number, newName: string): Promise<BookEntity> {
+    await this.booksRepo.update(bookId, { name: newName })
+    return this.booksRepo.findOne(bookId)
   }
 }

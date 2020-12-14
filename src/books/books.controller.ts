@@ -1,8 +1,17 @@
-import { Body, Controller, Get, Header, Post } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
 import { BooksService } from './books.service'
 import { BookEntity } from './entities'
-import { CreateBookDto } from './dto'
+import { CreateBookDto, UpdateBookDto } from './dto'
 
 @Controller('book')
 export class BooksController {
@@ -19,5 +28,26 @@ export class BooksController {
   @Get()
   getAllBooks(): Promise<BookEntity[]> {
     return this.booksService.getAllBooks()
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Deletes specified book and returns the id',
+  })
+  @Delete(':id')
+  deleteBook(@Param('id') bookId: number): Promise<number> {
+    return this.booksService.deleteBook(bookId)
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Updates specified book',
+  })
+  @Put(':id')
+  updateBook(
+    @Param('id') bookId: number,
+    @Body() { newName }: UpdateBookDto,
+  ): Promise<BookEntity> {
+    return this.booksService.updateBook(bookId, newName)
   }
 }
