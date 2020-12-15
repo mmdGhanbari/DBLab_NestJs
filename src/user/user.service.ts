@@ -5,16 +5,21 @@ import { BookEntity } from '../books/entities'
 
 @Injectable()
 export class UserService {
-  async insert({ name }: CreateUserDto): Promise<UserEntity> {
+  async insert({ name, password }: CreateUserDto): Promise<UserEntity> {
     const userEntity: UserEntity = UserEntity.create()
     userEntity.name = name
+    userEntity.password = password
 
     await UserEntity.save(userEntity)
     return userEntity
   }
 
+  async findOne(username: string): Promise<UserEntity | undefined> {
+    return UserEntity.findOne({ name: username })
+  }
+
   async getAllUsers(): Promise<UserEntity[]> {
-    return await UserEntity.find()
+    return UserEntity.find({ select: ['id', 'name'] })
   }
 
   async getBooksOfUser(userId: number): Promise<BookEntity[]> {

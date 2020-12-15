@@ -11,8 +11,11 @@ export class BooksService {
     private readonly booksRepo: Repository<BookEntity>,
   ) {}
 
-  async insert(bookDetails: CreateBookDto): Promise<BookEntity> {
-    const { name, userId, genreIds } = bookDetails
+  async insert(
+    bookDetails: CreateBookDto,
+    userId: number,
+  ): Promise<BookEntity> {
+    const { name, genreIds } = bookDetails
     const user = await UserEntity.findOne(userId)
     const genres = await Promise.all(
       genreIds.map((id) => GenreEntity.findOne(id)),

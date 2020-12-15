@@ -10,12 +10,6 @@ export default class CreateBookDto {
   readonly name: string
 
   @ApiProperty({
-    description: 'Owner Id',
-    default: 1,
-  })
-  readonly userId: number
-
-  @ApiProperty({
     description: 'List of GenreIds',
     type: [Number],
   })
