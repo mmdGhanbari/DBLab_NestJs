@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Header,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Get, Header, Post, UseGuards } from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -15,7 +7,6 @@ import {
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto'
 import { UserEntity } from './entities'
-import { BookEntity } from '../books/entities'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 
 @Controller('user')
@@ -36,16 +27,5 @@ export class UserController {
   @Get()
   getAll(): Promise<UserEntity[]> {
     return this.userService.getAllUsers()
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({
-    description: 'Returns all books owned by the user determined by userId',
-  })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized user' })
-  @Get('books')
-  getBooks(@Request() { user }: { user: UserEntity }): Promise<BookEntity[]> {
-    return this.userService.getBooksOfUser(user.id)
   }
 }

@@ -6,10 +6,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   const options = new DocumentBuilder()
-    .setTitle('My NestJs App')
-    .setDescription('My App API documentation')
+    .setTitle('NestJs Todo App')
+    .setDescription('Todo App API documentation')
     .setVersion('1.0')
-    .addTag('nestJs')
+    .addTag('todo')
     .addBearerAuth()
     .build()
   const document = SwaggerModule.createDocument(app, options)

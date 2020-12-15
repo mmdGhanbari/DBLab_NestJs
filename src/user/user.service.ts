@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { UserEntity } from './entities'
 import { CreateUserDto } from './dto'
-import { BookEntity } from '../books/entities'
+import { TaskEntity } from '../todo/entities'
 
 @Injectable()
 export class UserService {
@@ -22,11 +22,11 @@ export class UserService {
     return UserEntity.find({ select: ['id', 'name'] })
   }
 
-  async getBooksOfUser(userId: number): Promise<BookEntity[]> {
+  async getUserTasks(userId: number): Promise<TaskEntity[]> {
     const user: UserEntity = await UserEntity.findOne({
       where: { id: userId },
-      relations: ['books'],
+      relations: ['tasks', 'tasks.category', 'tasks.subTasks', 'tasks.labels'],
     })
-    return user.books
+    return user.tasks
   }
 }
